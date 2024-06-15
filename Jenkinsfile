@@ -12,6 +12,8 @@ pipeline {
             steps {
                sh """
                ls -l
+               cd 01-vpc
+               terraform init -reconfigure
             """
             }
         }
@@ -27,7 +29,7 @@ pipeline {
             }
         }
     }
-    
+
      post { 
        always { 
             echo 'I will always say Hello again!'
