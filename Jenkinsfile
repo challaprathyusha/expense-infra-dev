@@ -11,32 +11,41 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-               sh """
-               ls -l
-               cd 01-vpc
-               terraform init -reconfigure
-            """
+                sh """
+                cd 01-vpc
+                terraform init -reconfigure
+                """
             }
         }
         stage('plan') {
             steps {
-                sh 'sleep 10'
+                sh """
+                cd 01-vpc
+                terraform plan
+                """
             }
         }
         stage('Deploy') {
-            steps {
-                sh 'echo deploy stage in pipeline'
-                
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
+             steps {
+                sh """
+                cd 01-vpc
+                terraform deploy -auto-approve
+                """
             }
         }
     }
 
-     post { 
-       always { 
+
+    post { 
+        always { 
             echo 'I will always say Hello again!'
             deleteDir()
         }
-         success { 
+        success { 
             echo 'I will run when pipeline is success'
         }
         failure { 
