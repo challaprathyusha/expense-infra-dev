@@ -1,0 +1,73 @@
+- name: SG rules for frontend,backend,db,bastion,vpn,app-alb,web-alb
+  SG:
+  - expense-dev-frontend
+  - expense-dev-backend
+  - expense-dev-db
+  - expense-dev-bastion
+  - expense-dev-app-alb
+  - expense-dev-web-alb
+  - expense-dev-vpn
+  tasks:
+  expense-dev-frontend: SG inbound rules for frontend 
+    - name: frontend accepting connections from web-alb
+      port: 80
+      source: sg attached to web-alb
+    - name: frontend accepting connections from bastion
+      port: 22
+      source: sg attached to bastion host
+    - name: frontend accepting connections from vpn
+      port: 22
+      source: sg attached to vpn
+  expense-dev-backend:  SG inbound rules for backend 
+    - name: backend accepting connections from app-alb
+      port: 8080
+      source: sg attached to app-alb
+    - name: backend accepting connections from bastion
+      port: 22
+      source: sg attached to bastion
+    - name: backend accepting connections from vpn
+      port: 22
+      source: sg attached to vpn
+    - name: backend accepting connections from vpn
+      port: 8080
+      source: sg attached to vpn
+  expense-dev-db: SG inbound rules for db
+    - name: db accepting connections from backend
+      port: 3306
+      source: sg attached to backend
+    - name: db accepting connections from bastion
+      port: 3306
+      source: sg attached to bastion host
+    - name: db accepting connections from vpn
+      port: 3306
+      source: sg attached to vpn
+
+  # we can give our systems public ip but it keeps on changing, so we must give public 
+  expense-dev-bastion: SG inbound rules for bastion
+    - name: bastion accepting connections from public
+      port: 22
+      source: ["0.0.0.0/0"] 
+  
+  ##ALB'S and RDS are completely managed by aws, they dont provide ssh access to them
+  ##we can connect to ALB's only through 80 0r 443 port and RDS through 3306 port
+  expense-dev-app-alb: SG inbound rules for app-alb
+    - name: app-alb accepting connections from frontend
+      port: 80
+      source: sg attached to frontend
+    - name: app-alb accepting connections from vpn
+      port: 80
+      source: sg attached to vpn
+    - name: app-alb accepting connections from bastion
+      port: 80
+      source: sg attached to bastion
+  expense-dev-web-alb: SG inbound rules for web-alb
+    - name: web-alb accepting connections from public
+      port: 80
+      source: public["0.0.0.0/0"]
+    - name: web-alb accepting connections from public
+      port: 443
+      source: public["0.0.0.0/0"]
+  expense-dev-vpn: SG inbound rules for vpn
+    - name: vpn accepting connections from public
+      port: 943,443,22,1194
+      source: public["0.0.0.0/0"]
