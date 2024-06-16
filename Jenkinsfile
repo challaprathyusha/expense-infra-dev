@@ -7,6 +7,7 @@ pipeline {
         disableConcurrentBuilds()
         ansiColor('xterm')
     }
+    
     parameters {
         choice(name: 'action', choices: ['Apply', 'Destroy'], description: 'Pick something')
     }
@@ -21,6 +22,11 @@ pipeline {
             }
         }
         stage('plan') {
+            when {
+                expression{
+                    params.action == 'Apply'
+                }
+            }
             steps {
                 sh """
                 cd 01-vpc
@@ -29,6 +35,12 @@ pipeline {
             }
         }
         stage('Deploy') {
+            //using when condition we can control the execution of stages in pipeline
+            when {
+                expression{
+                    params.action == 'Apply'
+                }
+            }
             // if we want to proceed to next stage based on previous stage 
             input {
                 message "Should we continue?"
@@ -43,6 +55,11 @@ pipeline {
         }
 
         stage('Destroy') {
+             when {
+                expression{
+                    params.action == 'Destroy'
+                }
+            }
             // if we want to proceed to next stage based on previous stage 
             input {
                 message "Should we continue?"
