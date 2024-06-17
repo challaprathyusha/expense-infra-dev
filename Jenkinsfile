@@ -1,3 +1,4 @@
+
 pipeline {
     // agent {
     //     label 'AGENT-1'
@@ -16,6 +17,7 @@ pipeline {
         stage('Init') {
             steps {
                 sh """
+                ls -l
                 cd 01-vpc
                 terraform init -reconfigure
                 """
