@@ -33,6 +33,27 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+#listener rule for web alb,we access it through browser on port 443 which means it listens on port 443 and gives fixed response
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.web_alb.arn
+  port              = "443"
+
+  protocol          = "HTTPS"
+  certificate_arn   = data.aws_ssm_parameter.acm_certificate_arn.value
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/html"
+      message_body = "<h1>This is fixed response from Web ALB HTTPS</h1>"
+      status_code  = "200"
+    }
+  }
+}
+
+
 #route53 record for web alb
 module "records" {
   source  = "terraform-aws-modules/route53/aws//modules/records"

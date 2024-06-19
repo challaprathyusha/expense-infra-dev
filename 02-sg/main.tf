@@ -153,12 +153,12 @@ resource "aws_security_group_rule" "backend-bastion" {
 
 #SG rule for frontend security group
 #inbound rules for frontend accepting connections from
-resource "aws_security_group_rule" "frontend-user" {
+resource "aws_security_group_rule" "frontend_web_alb" {
   type              = "ingress"
   from_port         = 80
   to_port           = 80
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"] 
+  source_security_group_id = module.web-alb.sg_id
   security_group_id = module.frontend.sg_id
 }
 
@@ -224,15 +224,15 @@ resource "aws_security_group_rule" "web-alb-public-http" {
   security_group_id = module.web-alb.sg_id
 }
 
-#inbound rules for web-alb accepting connections from public on port 443
-# resource "aws_security_group_rule" "web-alb-public-https" {
-#   type              = "ingress"
-#   from_port         = 443
-#   to_port           = 443
-#   protocol          = "tcp"
-#   cidr_blocks       = ["0.0.0.0/0"] 
-#   security_group_id = module.web-alb.sg_id
-# }
+# inbound rules for web-alb accepting connections from public on port 443
+resource "aws_security_group_rule" "web-alb-public-https" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"] 
+  security_group_id = module.web-alb.sg_id
+}
 
 #SG rule for bastion security group
 #inbound rules for bastion accepting connections from public
