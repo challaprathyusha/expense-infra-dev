@@ -151,6 +151,17 @@ resource "aws_security_group_rule" "backend-bastion" {
 }
 
 
+#added as part of Jenkins CICD
+resource "aws_security_group_rule" "backend_default_vpc" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks = ["172.31.0.0/16"]
+  security_group_id = module.backend.sg_id
+}
+
+
 #SG rule for frontend security group
 #inbound rules for frontend accepting connections from
 resource "aws_security_group_rule" "frontend_web_alb" {
