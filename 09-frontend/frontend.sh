@@ -3,4 +3,4 @@ component=$1
 environment=$2
 dnf install ansible -y
 pip3.9 install botocore boto3 #ansible to connect to aws we need to install this pipmodules
-ansible-pull -i localhost, -U https://github.com/challaprathyusha/expenses-ansible-roles-tf.git main.yaml -e COMPONENT=$component -e env=$environment
+ansible-pull -i localhost, -U https://github.com/challaprathyusha/expenses-ansible-roles-tf.git main.yaml -e COMPONENT=$component -e env=$environment 
